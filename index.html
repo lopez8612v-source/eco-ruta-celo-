@@ -3,10 +3,10 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>EcoRuta Celo</title>
+<title>EcoRuta Celo - Cali</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Fraunces:opsz,wght@9..144,300;9..144,500;9..144,700&family=Plus+Jakarta+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Fraunces:opsz,wght@9..144,300;9..144,500;9..144,700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -26,8 +26,8 @@
     --text-faint: #a8a89e;
     --border: rgba(26,61,43,0.12);
     --border-strong: rgba(26,61,43,0.25);
-    --radius: 14px;
-    --radius-sm: 8px;
+    --radius: 16px;
+    --radius-sm: 10px;
   }
 
   body {
@@ -40,19 +40,25 @@
       radial-gradient(circle at 80% 20%, rgba(201,168,76,0.05) 0%, transparent 40%);
   }
 
-  /* ── LAYOUT ── */
   .shell {
     max-width: 480px;
     margin: 0 auto;
-    padding: 0 16px 40px;
+    padding: 0 16px 60px;
   }
 
-  /* ── HEADER ── */
+  /* ── HEADER & NAVIGATION ── */
   header {
-    padding: 20px 0 16px;
+    padding: 20px 0 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+
+  .logo-bar {
     display: flex;
     align-items: center;
     justify-content: space-between;
+    width: 100%;
   }
 
   .logo {
@@ -62,40 +68,60 @@
   }
 
   .logo-icon {
-    width: 34px; height: 34px;
+    width: 36px; height: 36px;
     background: var(--green-deep);
-    border-radius: 10px;
+    border-radius: 12px;
     display: flex; align-items: center; justify-content: center;
-    font-size: 17px;
+    font-size: 18px;
   }
 
   .logo-text {
     font-family: 'Fraunces', serif;
-    font-size: 18px;
+    font-size: 20px;
     font-weight: 700;
     color: var(--green-deep);
     letter-spacing: -0.02em;
   }
 
-  .logo-text span {
-    color: var(--green-bright);
+  .logo-text span { color: var(--green-bright); }
+  
+  .cali-badge {
+    font-size: 11px;
+    background: var(--gold-light);
+    color: var(--gold);
+    border: 1px solid rgba(201,168,76,0.3);
+    padding: 4px 10px;
+    border-radius: 50px;
+    font-weight: 700;
+    letter-spacing: 0.05em;
   }
 
-  /* ── TABS ── */
+  /* ── HORIZONTAL SCROLLABLE TABS ── */
+  .tabs-container {
+    width: 100%;
+    overflow-x: auto;
+    scrollbar-width: none; /* Firefox */
+    -webkit-overflow-scrolling: touch;
+    padding-bottom: 4px;
+  }
+  
+  .tabs-container::-webkit-scrollbar { display: none; } /* Chrome/Safari */
+
   .tabs {
     display: flex;
     background: var(--surface2);
     border: 1px solid var(--border);
     border-radius: 50px;
-    padding: 3px;
-    gap: 2px;
+    padding: 4px;
+    gap: 4px;
+    width: max-content;
   }
 
   .tab-btn {
-    padding: 7px 16px;
+    padding: 8px 16px;
     border-radius: 50px;
     font-size: 13px;
-    font-weight: 500;
+    font-weight: 600;
     cursor: pointer;
     border: none;
     background: transparent;
@@ -121,571 +147,308 @@
   }
 
   .balance-card::before {
-    content: '';
-    position: absolute;
-    top: -40px; right: -40px;
-    width: 180px; height: 180px;
-    background: rgba(82,183,136,0.15);
-    border-radius: 50%;
-  }
-
-  .balance-card::after {
-    content: '';
-    position: absolute;
-    bottom: -60px; left: -20px;
-    width: 140px; height: 140px;
-    background: rgba(201,168,76,0.08);
-    border-radius: 50%;
+    content: ''; position: absolute; top: -40px; right: -40px;
+    width: 180px; height: 180px; background: rgba(82,183,136,0.15); border-radius: 50%;
   }
 
   .balance-label {
-    font-size: 11px;
-    font-weight: 600;
-    letter-spacing: .1em;
-    text-transform: uppercase;
-    color: rgba(255,255,255,0.5);
-    margin-bottom: 8px;
+    font-size: 11px; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; color: rgba(255,255,255,0.5); margin-bottom: 8px;
   }
 
   .balance-amount {
-    font-family: 'Fraunces', serif;
-    font-size: 42px;
-    font-weight: 300;
-    color: #fff;
-    line-height: 1;
-    letter-spacing: -0.02em;
-    position: relative;
-    z-index: 1;
+    font-family: 'Fraunces', serif; font-size: 42px; font-weight: 300; color: #fff; line-height: 1; letter-spacing: -0.02em; position: relative; z-index: 1;
   }
 
-  .balance-currency {
-    font-family: 'DM Mono', monospace;
-    font-size: 16px;
-    color: var(--green-bright);
-    margin-left: 6px;
-  }
+  .balance-currency { font-family: 'DM Mono', monospace; font-size: 16px; color: var(--green-bright); margin-left: 6px; }
+  .net-pill { display: inline-flex; align-items: center; gap: 6px; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.15); color: rgba(255,255,255,0.7); font-size: 11px; padding: 5px 12px; border-radius: 50px; margin-top: 16px; }
+  .net-dot { width: 6px; height: 6px; background: var(--green-bright); border-radius: 50%; animation: blink 2s ease-in-out infinite; }
 
-  .net-pill {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    background: rgba(255,255,255,0.1);
-    border: 1px solid rgba(255,255,255,0.15);
-    color: rgba(255,255,255,0.7);
-    font-size: 11px;
-    padding: 5px 12px;
-    border-radius: 50px;
-    margin-top: 16px;
-  }
-
-  .net-dot {
-    width: 6px; height: 6px;
-    background: var(--green-bright);
-    border-radius: 50%;
-    animation: blink 2s ease-in-out infinite;
-  }
-
-  @keyframes blink {
-    0%,100% { opacity: 1; }
-    50% { opacity: 0.3; }
-  }
+  @keyframes blink { 0%,100% { opacity: 1; } 50% { opacity: 0.3; } }
 
   /* ── STAT GRID ── */
-  .stat-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 10px;
-    margin-bottom: 14px;
+  .stat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 14px; }
+  .stat-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 16px; }
+  .stat-label { font-size: 11px; font-weight: 600; letter-spacing: .07em; text-transform: uppercase; color: var(--text-faint); margin-bottom: 6px; }
+  .stat-value { font-family: 'Fraunces', serif; font-size: 24px; font-weight: 500; color: var(--green-deep); letter-spacing: -0.02em; }
+
+  /* ── CARDS & SECTIONS ── */
+  .card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 20px; margin-bottom: 14px; }
+  .card-title { font-size: 13px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--text-muted); margin-bottom: 16px; display: flex; align-items: center; gap: 6px; }
+
+  /* ── INTERACTIVE SELECTION (RESIDUOS) ── */
+  .residuos-selector { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 16px; }
+  .residuo-node {
+    border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 12px; cursor: pointer; text-align: center; transition: all 0.2s; background: var(--surface);
   }
+  .residuo-node:hover { border-color: var(--green-mid); background: var(--green-pale); }
+  .residuo-node.selected { border-color: var(--green-bright); background: var(--green-light); color: var(--green-deep); font-weight: 600; }
+  .residuo-icon { font-size: 20px; margin-bottom: 4px; }
+  .residuo-label { font-size: 12px; }
 
-  .stat-card {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: var(--radius-sm);
-    padding: 16px;
+  /* ── MAP & LISTS ── */
+  .map-wrapper { width: 100%; height: 220px; border-radius: var(--radius-sm); overflow: hidden; border: 1px solid var(--border-strong); margin-bottom: 16px; }
+  
+  .route-card {
+    background: var(--surface); border-left: 4px solid var(--green-mid); padding: 14px; margin-bottom: 10px; border-top: 1px solid var(--border); border-right: 1px solid var(--border); border-bottom: 1px solid var(--border); border-radius: 0 var(--radius-sm) var(--radius-sm) 0; display: flex; justify-content: space-between; align-items: center;
   }
+  .route-info h4 { font-size: 14px; color: var(--green-deep); font-weight: 600; }
+  .route-info p { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
+  .route-badge { font-size: 11px; background: var(--green-light); color: var(--green-deep); padding: 4px 10px; border-radius: 20px; font-weight: 600; }
 
-  .stat-label {
-    font-size: 11px;
-    font-weight: 600;
-    letter-spacing: .07em;
-    text-transform: uppercase;
-    color: var(--text-faint);
-    margin-bottom: 6px;
-  }
+  /* ── FORMS & INPUTS ── */
+  .form-desc { font-size: 13px; color: var(--text-muted); line-height: 1.6; margin-bottom: 16px; }
+  .field { margin-bottom: 14px; }
+  .field label { display: block; font-size: 11px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--text-muted); margin-bottom: 6px; }
+  .field input, .field select { width: 100%; padding: 12px 14px; font-size: 14px; border: 1px solid var(--border-strong); border-radius: var(--radius-sm); background: var(--bg); color: var(--text); font-family: 'Plus Jakarta Sans', sans-serif; outline: none; }
+  .field input:focus { border-color: var(--green-mid); box-shadow: 0 0 0 3px rgba(45,106,79,0.12); }
 
-  .stat-value {
-    font-family: 'Fraunces', serif;
-    font-size: 24px;
-    font-weight: 500;
-    color: var(--green-deep);
-    letter-spacing: -0.02em;
-  }
+  /* ── INFO BLOCKS ── */
+  .info-block { display: flex; gap: 12px; margin-bottom: 16px; background: var(--green-pale); padding: 14px; border-radius: var(--radius-sm); border: 1px solid rgba(82,183,136,0.2); }
+  .info-block-icon { font-size: 20px; }
+  .info-block-text h4 { font-size: 14px; color: var(--green-deep); font-weight: 700; margin-bottom: 2px; }
+  .info-block-text p { font-size: 12px; color: var(--text-muted); line-height: 1.5; }
 
-  /* ── CARD ── */
-  .card {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    padding: 20px;
-    margin-bottom: 14px;
-  }
+  /* ── REVIEWS & STARS ── */
+  .review-stars { color: var(--gold); font-size: 14px; margin-top: 4px; }
 
-  .card-title {
-    font-size: 13px;
-    font-weight: 600;
-    letter-spacing: .06em;
-    text-transform: uppercase;
-    color: var(--text-faint);
-    margin-bottom: 16px;
-  }
-
-  /* ── HISTORY ── */
-  .history-row {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 12px 0;
-    border-bottom: 1px solid var(--border);
-  }
-
-  .history-row:last-child { border-bottom: none; }
-
-  .history-icon {
-    width: 36px; height: 36px;
-    background: var(--green-pale);
-    border-radius: 50%;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 15px;
-    margin-right: 12px;
-    flex-shrink: 0;
-  }
-
-  .history-left { display: flex; align-items: center; }
-
-  .history-main {
-    font-size: 14px;
-    font-weight: 600;
-    color: var(--text);
-  }
-
-  .history-date {
-    font-size: 12px;
-    color: var(--text-faint);
-    font-family: 'DM Mono', monospace;
-    margin-top: 2px;
-  }
-
-  .history-reward {
-    font-family: 'DM Mono', monospace;
-    font-size: 14px;
-    font-weight: 500;
-    color: var(--green-mid);
-  }
-
-  /* ── PROGRESS ── */
-  .progress-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: baseline;
-    margin-bottom: 10px;
-  }
-
-  .progress-goal {
-    font-size: 12px;
-    color: var(--text-muted);
-  }
-
-  .progress-pct {
-    font-family: 'Fraunces', serif;
-    font-size: 20px;
-    font-weight: 500;
-    color: var(--green-deep);
-  }
-
-  .progress-track {
-    height: 8px;
-    background: var(--surface2);
-    border-radius: 4px;
-    overflow: hidden;
-  }
-
-  .progress-fill {
-    height: 100%;
-    background: linear-gradient(90deg, var(--green-mid), var(--green-bright));
-    border-radius: 4px;
-    transition: width .6s ease;
-  }
-
-  /* ── FORM ── */
-  .form-desc {
-    font-size: 13px;
-    color: var(--text-muted);
-    line-height: 1.6;
-    margin-bottom: 20px;
-    padding-bottom: 20px;
-    border-bottom: 1px solid var(--border);
-  }
-
-  .field { margin-bottom: 16px; }
-
-  .field label {
-    display: block;
-    font-size: 12px;
-    font-weight: 600;
-    letter-spacing: .06em;
-    text-transform: uppercase;
-    color: var(--text-muted);
-    margin-bottom: 7px;
-  }
-
-  .field input {
-    width: 100%;
-    padding: 11px 14px;
-    font-size: 14px;
-    border: 1px solid var(--border-strong);
-    border-radius: var(--radius-sm);
-    background: var(--bg);
-    color: var(--text);
-    font-family: 'Plus Jakarta Sans', sans-serif;
-    outline: none;
-    transition: border-color .15s, box-shadow .15s;
-  }
-
-  .field input:focus {
-    border-color: var(--green-mid);
-    box-shadow: 0 0 0 3px rgba(45,106,79,0.12);
-  }
-
-  .field input::placeholder { color: var(--text-faint); }
-
-  /* ── PREVIEW ── */
-  .preview-box {
-    background: var(--green-pale);
-    border: 1px solid rgba(82,183,136,0.3);
-    border-radius: var(--radius-sm);
-    padding: 14px;
-    margin-bottom: 16px;
-    display: none;
-    animation: fadeIn .2s ease;
-  }
-
-  .preview-box.show { display: block; }
-
-  @keyframes fadeIn { from { opacity:0; transform:translateY(4px); } to { opacity:1; transform:translateY(0); } }
-
-  .preview-row {
-    display: flex;
-    justify-content: space-between;
-    font-size: 13px;
-    padding: 3px 0;
-  }
-
-  .preview-row-label { color: var(--green-mid); }
-  .preview-row-val { font-weight: 600; color: var(--green-deep); font-family: 'DM Mono', monospace; font-size: 12px; }
-
-  /* ── BUTTON ── */
-  .btn-primary {
-    width: 100%;
-    padding: 13px;
-    background: var(--green-deep);
-    color: #fff;
-    border: none;
-    border-radius: var(--radius-sm);
-    font-size: 14px;
-    font-weight: 600;
-    cursor: pointer;
-    font-family: 'Plus Jakarta Sans', sans-serif;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-    transition: background .15s, transform .1s;
-    letter-spacing: .01em;
-  }
-
+  /* ── BUTTONS ── */
+  .btn-primary { width: 100%; padding: 14px; background: var(--green-deep); color: #fff; border: none; border-radius: var(--radius-sm); font-size: 14px; font-weight: 600; cursor: pointer; font-family: 'Plus Jakarta Sans', sans-serif; display: flex; align-items: center; justify-content: center; gap: 8px; transition: all .15s; }
   .btn-primary:hover { background: #112a1e; }
-  .btn-primary:active { transform: scale(0.99); }
-  .btn-primary:disabled { opacity: .5; cursor: not-allowed; transform: none; }
+  .btn-outline { width: 100%; padding: 12px; background: transparent; color: var(--green-deep); border: 1px solid var(--green-deep); border-radius: var(--radius-sm); font-size: 13px; font-weight: 600; cursor: pointer; text-align: center; margin-top: 8px; display: block; text-decoration: none; }
 
-  .spinner {
-    width: 16px; height: 16px;
-    border: 2px solid rgba(255,255,255,0.3);
-    border-top-color: #fff;
-    border-radius: 50%;
-    animation: spin .6s linear infinite;
-    display: none;
-  }
+  /* ── HISTORIAL ── */
+  .history-row { display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid var(--border); }
+  .history-row:last-child { border-bottom: none; }
+  .history-icon { width: 36px; height: 36px; background: var(--green-pale); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 15px; margin-right: 12px; }
+  .history-left { display: flex; align-items: center; }
+  .history-main { font-size: 14px; font-weight: 600; }
+  .history-date { font-size: 11px; color: var(--text-faint); font-family: 'DM Mono', monospace; }
+  .history-reward { font-family: 'DM Mono', monospace; font-size: 14px; font-weight: 600; color: var(--green-mid); }
 
-  @keyframes spin { to { transform: rotate(360deg); } }
-
-  /* ── SUCCESS ── */
-  .success-banner {
-    margin-top: 14px;
-    background: var(--green-pale);
-    border: 1px solid rgba(82,183,136,0.35);
-    border-radius: var(--radius-sm);
-    padding: 14px;
-    display: none;
-    animation: fadeIn .3s ease;
-  }
-
-  .success-banner.show { display: flex; align-items: flex-start; gap: 10px; }
-
-  .success-check {
-    width: 24px; height: 24px;
-    background: var(--green-mid);
-    border-radius: 50%;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 13px;
-    color: #fff;
-    flex-shrink: 0;
-  }
-
-  .success-text { font-size: 13px; color: var(--green-deep); line-height: 1.6; }
-
-  /* ── AI BUBBLE ── */
-  .ai-bubble {
-    margin-top: 12px;
-    background: var(--gold-light);
-    border: 1px solid rgba(201,168,76,0.3);
-    border-radius: var(--radius-sm);
-    padding: 14px;
-    display: none;
-    animation: fadeIn .3s ease;
-  }
-
-  .ai-bubble.show { display: block; }
-
-  .ai-header {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    font-size: 11px;
-    font-weight: 700;
-    letter-spacing: .08em;
-    text-transform: uppercase;
-    color: var(--gold);
-    margin-bottom: 8px;
-  }
-
-  .ai-dot {
-    width: 6px; height: 6px;
-    background: var(--gold);
-    border-radius: 50%;
-  }
-
-  .ai-text {
-    font-size: 13px;
-    color: #5a4a1a;
-    line-height: 1.7;
-  }
-
-  /* ── VIEWS ── */
-  #view-reciclador { display: none; }
+  /* UI ELEMENT TOGGLES */
+  #view-reciclador, #view-rutas, #view-empresas, #view-info { display: none; }
 </style>
 </head>
 <body>
 
 <div class="shell">
   <header>
-    <div class="logo">
-      <div class="logo-icon">🌱</div>
-      <div class="logo-text">Eco<span>Ruta</span> Celo</div>
+    <div class="logo-bar">
+      <div class="logo">
+        <div class="logo-icon">🌱</div>
+        <div class="logo-text">Eco<span>Ruta</span> Celo</div>
+      </div>
+      <span class="cali-badge">CALI ☀️</span>
     </div>
-    <div class="tabs">
-      <button class="tab-btn active" onclick="switchRole('ciudadano', this)">Ciudadano</button>
-      <button class="tab-btn" onclick="switchRole('reciclador', this)">Reciclador</button>
+    
+    <div class="tabs-container">
+      <div class="tabs">
+        <button class="tab-btn active" onclick="switchRole('ciudadano', this)">🏠 Hogar</button>
+        <button class="tab-btn" onclick="switchRole('reciclador', this)">🚛 Reciclador</button>
+        <button class="tab-btn" onclick="switchRole('rutas', this)">🗺️ EcoRutas</button>
+        <button class="tab-btn" onclick="switchRole('empresas', this)">🏢 Empresas REP</button>
+        <button class="tab-btn" onclick="switchRole('info', this)">📖 Info ReFi</button>
+      </div>
     </div>
   </header>
 
-  <!-- CIUDADANO -->
   <div id="view-ciudadano">
     <div class="balance-card">
-      <div class="balance-label">Balance ecológico</div>
-      <div class="balance-amount">15.50<span class="balance-currency">cUSD</span></div>
-      <div class="net-pill"><span class="net-dot"></span> Red Celo Mainnet</div>
-    </div>
-
-    <div class="stat-grid">
-      <div class="stat-card">
-        <div class="stat-label">Total reciclado</div>
-        <div class="stat-value">15.2 kg</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-label">Entregas</div>
-        <div class="stat-value">2</div>
-      </div>
+      <div class="balance-label">Mis Eco-Incentivos acumulados</div>
+      <div class="balance-amount">24.80<span class="balance-currency">cUSD</span></div>
+      <div class="net-pill"><span class="net-dot"></span> Celo Blockchain Live</div>
     </div>
 
     <div class="card">
-      <div class="card-title">Historial</div>
+      <div class="card-title">📦 ¿Qué vas a separar hoy en casa?</div>
+      <p class="form-desc">Selecciona tu residuo para clasificarlo antes de la ruta:</p>
+      <div class="residuos-selector">
+        <div class="residuo-node" id="r1" onclick="selectResiduo('r1')">
+          <div class="residuo-icon">🥤</div>
+          <div class="residuo-label">Plástico PET</div>
+        </div>
+        <div class="residuo-node" id="r2" onclick="selectResiduo('r2')">
+          <div class="residuo-icon">📦</div>
+          <div class="residuo-label">Cartón / Papel</div>
+        </div>
+      </div>
+      <button class="btn-primary" onclick="alert('¡Genial! Tu reporte ha sido agendado para la próxima EcoRuta de tu zona.')">Programar Entrega en mi Casa</button>
+    </div>
+
+    <div class="card">
+      <div class="card-title">⏱️ Historial de mi Impacto Ambiental</div>
       <div class="history-row">
         <div class="history-left">
           <div class="history-icon">♻️</div>
           <div>
-            <div class="history-main">5.2 kg — Plástico PET</div>
-            <div class="history-date">2026-06-01</div>
+            <div class="history-main">6.4 kg — Plástico PET</div>
+            <div class="history-date">Barrio San Fernando — Hace 2 días</div>
           </div>
         </div>
-        <div class="history-reward">+2.60 cUSD</div>
+        <div class="history-reward">+3.20 cUSD</div>
       </div>
       <div class="history-row">
         <div class="history-left">
           <div class="history-icon">♻️</div>
           <div>
-            <div class="history-main">10.0 kg — Plástico PET</div>
-            <div class="history-date">2026-05-28</div>
+            <div class="history-main">12.0 kg — Cartón prensado</div>
+            <div class="history-date">Barrio Ciudad Jardín — 2026-05-28</div>
           </div>
         </div>
-        <div class="history-reward">+5.00 cUSD</div>
-      </div>
-    </div>
-
-    <div class="card">
-      <div class="progress-header">
-        <div>
-          <div class="card-title" style="margin-bottom:0">Meta del mes</div>
-          <div class="progress-goal">15.2 kg de 25 kg</div>
-        </div>
-        <div class="progress-pct">61%</div>
-      </div>
-      <div style="margin-top:12px">
-        <div class="progress-track">
-          <div class="progress-fill" style="width:61%"></div>
-        </div>
+        <div class="history-reward">+4.80 cUSD</div>
       </div>
     </div>
   </div>
 
-  <!-- RECICLADOR -->
   <div id="view-reciclador">
     <div class="card">
-      <div class="card-title">Panel de verificación</div>
-      <p class="form-desc">Registra el material pesado para emitir cUSD al ciudadano en la red Celo.</p>
+      <div class="card-title">🔧 Báscula Digital On-Chain</div>
+      <p class="form-desc">Panel exclusivo para recicladores tradicionales certificados de Cali.</p>
 
       <div class="field">
-        <label>Dirección Celo o celular</label>
-        <input type="text" id="inp-address" placeholder="0x... o +573001234567" oninput="updatePreview()">
+        <label>ID o Billetera Celo del Ciudadano</label>
+        <input type="text" placeholder="Celular (+57) o Dirección 0x...">
       </div>
 
       <div class="field">
-        <label>Kilogramos de plástico PET</label>
-        <input type="number" id="inp-kilos" placeholder="Ej. 7.5" step="0.1" min="0" oninput="updatePreview()">
+        <label>Tipo de Residuo Verificado</label>
+        <select>
+          <option>Plástico PET Comercial</option>
+          <option>Cartón Limpio Grado A</option>
+          <option>Aluminio / Latas</option>
+        </select>
       </div>
 
-      <div class="preview-box" id="preview-box">
-        <div class="preview-row">
-          <span class="preview-row-label">Material</span>
-          <span class="preview-row-val">Plástico PET</span>
-        </div>
-        <div class="preview-row">
-          <span class="preview-row-label">Peso registrado</span>
-          <span class="preview-row-val" id="prev-kg">—</span>
-        </div>
-        <div class="preview-row">
-          <span class="preview-row-label">Tokens a emitir</span>
-          <span class="preview-row-val" id="prev-tokens">—</span>
-        </div>
-        <div class="preview-row">
-          <span class="preview-row-label">Destinatario</span>
-          <span class="preview-row-val" id="prev-addr">—</span>
-        </div>
+      <div class="field">
+        <label>Kilogramos en Báscula</label>
+        <input type="number" placeholder="Ej. 14.2" step="0.1">
       </div>
 
-      <button class="btn-primary" id="btn-send" onclick="handleRegister()">
-        <span class="spinner" id="spin-btn"></span>
-        <span id="btn-label">Confirmar y enviar tokens</span>
-      </button>
+      <button class="btn-primary" onclick="alert('Procesando firma en Smart Contract... ¡Incentivo enviado exitosamente!')">Validar Peso y Emitir cUSD</button>
+    </div>
+  </div>
 
-      <div class="success-banner" id="success-banner">
-        <div class="success-check">✓</div>
-        <div class="success-text" id="success-text">
-          <strong>¡Transacción confirmada!</strong><br>
-          <span id="success-detail"></span>
-        </div>
+  <div id="view-rutas">
+    <div class="card">
+      <div class="card-title">🗺️ Mapa de Recolección en Cali</div>
+      <p class="form-desc">Visualiza las rutas activas y los centros de acopio autorizados en la capital del Valle.</p>
+      
+      <div class="map-wrapper">
+        <iframe width="100%" height="100%" frameborder="0" src="https://www.openstreetmap.org/export/embed.html?bbox=-76.570%2C3.340%2C-76.480%2C3.480&amp;layer=mapnik&amp;marker=3.4516%2C-76.5320"></iframe>
       </div>
 
-      <div class="ai-bubble" id="ai-bubble">
-        <div class="ai-header"><span class="ai-dot"></span> Asistente EcoRuta</div>
-        <div class="ai-text" id="ai-text">Generando retroalimentación…</div>
+      <div class="route-card">
+        <div class="route-info">
+          <h4>Ruta Recicladores Organizados del Norte</h4>
+          <p>Barrios: Chipichape, Menga, Granada — En Curso</p>
+        </div>
+        <span class="route-badge">En Vivo 🚚</span>
+      </div>
+
+      <div class="route-card">
+        <div class="route-info">
+          <h4>Centro de Acopio Principal San Fernando</h4>
+          <p>Carrera 34 #4-25 — Abierto 24 Horas</p>
+        </div>
+        <span class="route-badge">Punto Fijo</span>
       </div>
     </div>
   </div>
+
+  <div id="view-empresas">
+    <div class="card">
+      <div class="card-title">🏢 Portal Corporativo de Sostenibilidad</div>
+      <p class="form-desc">Aquí es donde las grandes empresas inyectan fondos al sistema comprando "Créditos Blockchain de Plástico" para cumplir con la ley de reciclaje colombiana.</p>
+      
+      <div class="info-block">
+        <div class="info-block-icon">📊</div>
+        <div class="info-block-text">
+          <h4>Fondo de Garantía de Impacto</h4>
+          <p>Capital total depositado por empresas este mes: <strong>14,500 cUSD</strong> para financiar micro-recompensas en Cali.</p>
+        </div>
+      </div>
+
+      <div class="field">
+        <label>Empresa Financiadora</label>
+        <select id="empresa-select">
+          <option>Postobón S.A.</option>
+          <option>Bavaria Colombia</option>
+          <option>Coca-Cola Femsa Cali</option>
+        </select>
+      </div>
+
+      <div class="field">
+        <label>Estrategia Ambiental Apoyada</label>
+        <select>
+          <option>Estrategia: Limpieza del Río Cali (PET)</option>
+          <option>Estrategia: Reciclaje Masivo en Comunas del Sur</option>
+        </select>
+      </div>
+
+      <button class="btn-primary" onclick="alert('¡Gracias por tu calificación! Tu retroalimentación empresarial se ha guardado de forma transparente en la red Celo.')">Calificar e Impulsar Estrategia</button>
+      
+      <div style="margin-top:20px; font-size:12px; color:var(--text-muted);">
+        <strong>Últimas calificaciones de empresas:</strong>
+        <div class="review-stars">⭐⭐⭐⭐⭐ <span style="color:var(--text); font-size:11px;">Postobón calificó Ruta Norte</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div id="view-info">
+    <div class="card">
+      <div class="card-title">🌱 ¿Cómo funciona la economía de EcoRuta?</div>
+      
+      <div class="info-block">
+        <div class="info-block-icon">❓</div>
+        <div class="info-block-text">
+          <h4>¿Quién paga los incentivos?</h4>
+          <p>Las corporaciones obligadas por la ley nacional de reciclaje compran créditos blockchain transparentes. Ese dinero va directo a tu billetera.</p>
+        </div>
+      </div>
+
+      <div class="info-block">
+        <div class="info-block-icon">💵</div>
+        <div class="info-block-text">
+          <h4>¿Qué es el cUSD?</h4>
+          <p>Es el Dólar Digital de la red Celo. Cada cUSD equivale exactamente a un dólar real. Lo recibes seguro en tu app y puedes cambiarlo a pesos colombianos.</p>
+        </div>
+      </div>
+
+      <div class="info-block">
+        <div class="info-block-icon">🤝</div>
+        <div class="info-block-text">
+          <h4>Inclusión del Reciclador de Oficio</h4>
+          <p>Dignificamos el trabajo de los recicladores tradicionales de Cali dándoles comisiones extras por actuar como los auditores de impacto del sistema.</p>
+        </div>
+      </div>
+
+      <a href="https://celo.org" target="_blank" class="btn-outline">Conocer más sobre el ecosistema Celo</a>
+    </div>
+  </div>
+
 </div>
 
 <script>
-  function switchRole(r, el) {
-    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-    el.classList.add('active');
-    document.getElementById('view-ciudadano').style.display = r === 'ciudadano' ? 'block' : 'none';
-    document.getElementById('view-reciclador').style.display = r === 'reciclador' ? 'block' : 'none';
-    document.getElementById('success-banner').classList.remove('show');
-    document.getElementById('ai-bubble').classList.remove('show');
+  function switchRole(role, buttonElement) {
+    // Apagar todos los botones
+    document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+    // Encender botón presionado
+    buttonElement.classList.add('active');
+    
+    // Ocultar todas las secciones
+    document.getElementById('view-ciudadano').style.display = 'none';
+    document.getElementById('view-reciclador').style.display = 'none';
+    document.getElementById('view-rutas').style.display = 'none';
+    document.getElementById('view-empresas').style.display = 'none';
+    document.getElementById('view-info').style.display = 'none';
+    
+    // Mostrar la sección correcta
+    document.getElementById('view-' + role).style.display = 'block';
   }
 
-  function updatePreview() {
-    const kg = parseFloat(document.getElementById('inp-kilos').value);
-    const addr = document.getElementById('inp-address').value.trim();
-    const box = document.getElementById('preview-box');
-    if (!kg || kg <= 0 || !addr) { box.classList.remove('show'); return; }
-    box.classList.add('show');
-    document.getElementById('prev-kg').textContent = kg.toFixed(2) + ' kg';
-    document.getElementById('prev-tokens').textContent = (kg * 0.5).toFixed(2) + ' cUSD';
-    const short = addr.length > 16 ? addr.slice(0, 8) + '…' + addr.slice(-5) : addr;
-    document.getElementById('prev-addr').textContent = short;
-  }
-
-  async function handleRegister() {
-    const kg = parseFloat(document.getElementById('inp-kilos').value);
-    const addr = document.getElementById('inp-address').value.trim();
-    if (!kg || !addr) { alert('Por favor llena todos los campos'); return; }
-
-    const btn = document.getElementById('btn-send');
-    const spin = document.getElementById('spin-btn');
-    const lbl = document.getElementById('btn-label');
-    btn.disabled = true;
-    spin.style.display = 'block';
-    lbl.textContent = 'Procesando en blockchain…';
-    document.getElementById('success-banner').classList.remove('show');
-    document.getElementById('ai-bubble').classList.remove('show');
-
-    // Simula latencia blockchain
-    await new Promise(r => setTimeout(r, 1800));
-
-    spin.style.display = 'none';
-    btn.disabled = false;
-    lbl.textContent = 'Confirmar y enviar tokens';
-
-    const tokens = (kg * 0.5).toFixed(2);
-    document.getElementById('success-detail').textContent =
-      `${kg} kg registrados → ${tokens} cUSD enviados a ${addr.slice(0, 8)}…`;
-    document.getElementById('success-banner').classList.add('show');
-
-    document.getElementById('ai-bubble').classList.add('show');
-    document.getElementById('ai-text').textContent = 'Generando retroalimentación…';
-
-    try {
-      const res = await fetch('https://api.anthropic.com/v1/messages', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          model: 'claude-sonnet-4-20250514',
-          max_tokens: 1000,
-          system: 'Eres el asistente de EcoRuta Celo, una app de reciclaje con recompensas en cUSD sobre la blockchain de Celo en Colombia. Responde siempre en español, de forma amigable y motivadora. Sé breve (2-3 oraciones). No uses markdown ni asteriscos.',
-          messages: [{
-            role: 'user',
-            content: `Un reciclador acaba de registrar ${kg} kg de plástico PET y enviar ${tokens} cUSD al ciudadano. Dame un mensaje breve de confirmación y un dato curioso sobre el impacto ambiental de reciclar esa cantidad de plástico.`
-          }]
-        })
-      });
-      const data = await res.json();
-      const text = (data.content || []).map(b => b.text || '').join('');
-      document.getElementById('ai-text').textContent = text || '¡Transacción exitosa en la red Celo!';
-    } catch (e) {
-      document.getElementById('ai-text').textContent =
-        `¡Excelente! ${kg} kg de plástico PET reciclados equivalen a rescatar aproximadamente ${Math.round(kg * 2)} botellas del océano. Cada kilogramo suma al futuro del planeta.`;
-    }
+  function selectResiduo(id) {
+    document.querySelectorAll('.residuo-node').forEach(node => node.classList.remove('selected'));
+    document.getElementById(id).classList.add('selected');
   }
 </script>
 </body>

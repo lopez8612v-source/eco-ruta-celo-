@@ -7,6 +7,16 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Fraunces:opsz,wght@9..144,300;9..144,500;9..144,700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<!--
+  ══════════════════════════════════════════════════════
+  DEPENDENCIAS BLOCKCHAIN
+  ══════════════════════════════════════════════════════
+  ethers.js v5  → interactuar con la red Celo / smart contract
+  ══════════════════════════════════════════════════════
+-->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/ethers/5.7.2/ethers.umd.min.js"></script>
+
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -28,6 +38,8 @@
     --border-strong: rgba(26,61,43,0.25);
     --radius: 16px;
     --radius-sm: 10px;
+    --red: #c0392b;
+    --red-light: #fdf0ef;
   }
 
   body {
@@ -40,129 +52,127 @@
       radial-gradient(circle at 80% 20%, rgba(201,168,76,0.05) 0%, transparent 40%);
   }
 
-  .shell {
-    max-width: 480px;
-    margin: 0 auto;
-    padding: 0 16px 60px;
-  }
+  .shell { max-width: 480px; margin: 0 auto; padding: 0 16px 60px; }
 
-  /* ── HEADER & NAVIGATION ── */
-  header {
-    padding: 20px 0 12px;
-    display: flex;
-    flex-direction: column;
-    gap: 14px;
-  }
-
-  .logo-bar {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    width: 100%;
-  }
-
-  .logo {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-  }
-
-  .logo-icon {
-    width: 36px; height: 36px;
-    background: var(--green-deep);
-    border-radius: 12px;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 18px;
-  }
-
-  .logo-text {
-    font-family: 'Fraunces', serif;
-    font-size: 20px;
-    font-weight: 700;
-    color: var(--green-deep);
-    letter-spacing: -0.02em;
-  }
-
+  /* ── HEADER ── */
+  header { padding: 20px 0 12px; display: flex; flex-direction: column; gap: 14px; }
+  .logo-bar { display: flex; align-items: center; justify-content: space-between; width: 100%; gap: 10px; }
+  .logo { display: flex; align-items: center; gap: 10px; }
+  .logo-icon { width: 36px; height: 36px; background: var(--green-deep); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 18px; }
+  .logo-text { font-family: 'Fraunces', serif; font-size: 20px; font-weight: 700; color: var(--green-deep); letter-spacing: -0.02em; }
   .logo-text span { color: var(--green-bright); }
-  
-  .cali-badge {
-    font-size: 11px;
-    background: var(--gold-light);
-    color: var(--gold);
-    border: 1px solid rgba(201,168,76,0.3);
-    padding: 4px 10px;
-    border-radius: 50px;
-    font-weight: 700;
-    letter-spacing: 0.05em;
-  }
+  .cali-badge { font-size: 11px; background: var(--gold-light); color: var(--gold); border: 1px solid rgba(201,168,76,0.3); padding: 4px 10px; border-radius: 50px; font-weight: 700; letter-spacing: 0.05em; white-space: nowrap; }
 
-  /* ── HORIZONTAL SCROLLABLE TABS ── */
-  .tabs-container {
-    width: 100%;
-    overflow-x: auto;
-    scrollbar-width: none; /* Firefox */
-    -webkit-overflow-scrolling: touch;
-    padding-bottom: 4px;
-  }
-  
-  .tabs-container::-webkit-scrollbar { display: none; } /* Chrome/Safari */
-
-  .tabs {
+  /* ══════════════════════════════════════════
+     WALLET BUTTON — estado desconectado
+  ══════════════════════════════════════════ */
+  #btn-wallet {
     display: flex;
-    background: var(--surface2);
-    border: 1px solid var(--border);
+    align-items: center;
+    gap: 8px;
+    padding: 8px 14px;
     border-radius: 50px;
-    padding: 4px;
-    gap: 4px;
-    width: max-content;
-  }
-
-  .tab-btn {
-    padding: 8px 16px;
-    border-radius: 50px;
-    font-size: 13px;
-    font-weight: 600;
-    cursor: pointer;
-    border: none;
+    border: 1.5px solid var(--green-mid);
     background: transparent;
-    color: var(--text-muted);
+    color: var(--green-deep);
     font-family: 'Plus Jakarta Sans', sans-serif;
-    transition: all .2s;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
     white-space: nowrap;
+    transition: all .2s;
+    min-width: 0;
   }
+  #btn-wallet:hover { background: var(--green-pale); }
 
-  .tab-btn.active {
+  /* estado CONECTADO */
+  #btn-wallet.connected {
     background: var(--green-deep);
     color: #fff;
+    border-color: var(--green-deep);
   }
+
+  /* estado ERROR */
+  #btn-wallet.error {
+    background: var(--red-light);
+    color: var(--red);
+    border-color: var(--red);
+  }
+
+  .wallet-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--text-faint); flex-shrink: 0; }
+  #btn-wallet.connected .wallet-dot { background: var(--green-bright); animation: blink 2s ease-in-out infinite; }
+  #btn-wallet.error .wallet-dot { background: var(--red); }
+
+  /* ── WALLET INFO BANNER (bajo el header) ── */
+  #wallet-banner {
+    display: none;
+    background: var(--green-pale);
+    border: 1px solid rgba(82,183,136,0.3);
+    border-radius: var(--radius-sm);
+    padding: 12px 14px;
+    margin-bottom: 14px;
+    gap: 10px;
+    align-items: flex-start;
+    animation: fadeIn .3s ease;
+  }
+  #wallet-banner.show { display: flex; }
+  #wallet-banner.error { background: var(--red-light); border-color: rgba(192,57,43,0.3); }
+
+  .banner-icon { font-size: 18px; flex-shrink: 0; margin-top: 2px; }
+  .banner-body { flex: 1; min-width: 0; }
+  .banner-title { font-size: 13px; font-weight: 700; color: var(--green-deep); margin-bottom: 2px; }
+  #wallet-banner.error .banner-title { color: var(--red); }
+  .banner-sub {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--text-muted);
+    word-break: break-all;
+  }
+
+  /* ── NETWORK WARNING (red Celo) ── */
+  #network-warning {
+    display: none;
+    background: #fff8e1;
+    border: 1px solid rgba(201,168,76,0.4);
+    border-radius: var(--radius-sm);
+    padding: 12px 14px;
+    margin-bottom: 14px;
+    align-items: center;
+    gap: 10px;
+    animation: fadeIn .3s ease;
+  }
+  #network-warning.show { display: flex; }
+  .nw-text { flex: 1; font-size: 13px; color: #7a5c00; line-height: 1.5; }
+  #btn-switch-network {
+    padding: 7px 12px;
+    background: var(--gold);
+    color: #fff;
+    border: none;
+    border-radius: var(--radius-sm);
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    white-space: nowrap;
+    transition: background .15s;
+  }
+  #btn-switch-network:hover { background: #a87e2e; }
+
+  /* ── TABS ── */
+  .tabs-container { width: 100%; overflow-x: auto; scrollbar-width: none; -webkit-overflow-scrolling: touch; padding-bottom: 4px; }
+  .tabs-container::-webkit-scrollbar { display: none; }
+  .tabs { display: flex; background: var(--surface2); border: 1px solid var(--border); border-radius: 50px; padding: 4px; gap: 4px; width: max-content; }
+  .tab-btn { padding: 8px 16px; border-radius: 50px; font-size: 13px; font-weight: 600; cursor: pointer; border: none; background: transparent; color: var(--text-muted); font-family: 'Plus Jakarta Sans', sans-serif; transition: all .2s; white-space: nowrap; }
+  .tab-btn.active { background: var(--green-deep); color: #fff; }
 
   /* ── BALANCE CARD ── */
-  .balance-card {
-    background: var(--green-deep);
-    border-radius: var(--radius);
-    padding: 28px 24px;
-    margin-bottom: 14px;
-    position: relative;
-    overflow: hidden;
-  }
-
-  .balance-card::before {
-    content: ''; position: absolute; top: -40px; right: -40px;
-    width: 180px; height: 180px; background: rgba(82,183,136,0.15); border-radius: 50%;
-  }
-
-  .balance-label {
-    font-size: 11px; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; color: rgba(255,255,255,0.5); margin-bottom: 8px;
-  }
-
-  .balance-amount {
-    font-family: 'Fraunces', serif; font-size: 42px; font-weight: 300; color: #fff; line-height: 1; letter-spacing: -0.02em; position: relative; z-index: 1;
-  }
-
+  .balance-card { background: var(--green-deep); border-radius: var(--radius); padding: 28px 24px; margin-bottom: 14px; position: relative; overflow: hidden; }
+  .balance-card::before { content: ''; position: absolute; top: -40px; right: -40px; width: 180px; height: 180px; background: rgba(82,183,136,0.15); border-radius: 50%; }
+  .balance-label { font-size: 11px; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; color: rgba(255,255,255,0.5); margin-bottom: 8px; }
+  .balance-amount { font-family: 'Fraunces', serif; font-size: 42px; font-weight: 300; color: #fff; line-height: 1; letter-spacing: -0.02em; position: relative; z-index: 1; }
   .balance-currency { font-family: 'DM Mono', monospace; font-size: 16px; color: var(--green-bright); margin-left: 6px; }
   .net-pill { display: inline-flex; align-items: center; gap: 6px; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.15); color: rgba(255,255,255,0.7); font-size: 11px; padding: 5px 12px; border-radius: 50px; margin-top: 16px; }
   .net-dot { width: 6px; height: 6px; background: var(--green-bright); border-radius: 50%; animation: blink 2s ease-in-out infinite; }
-
   @keyframes blink { 0%,100% { opacity: 1; } 50% { opacity: 0.3; } }
 
   /* ── STAT GRID ── */
@@ -171,31 +181,26 @@
   .stat-label { font-size: 11px; font-weight: 600; letter-spacing: .07em; text-transform: uppercase; color: var(--text-faint); margin-bottom: 6px; }
   .stat-value { font-family: 'Fraunces', serif; font-size: 24px; font-weight: 500; color: var(--green-deep); letter-spacing: -0.02em; }
 
-  /* ── CARDS & SECTIONS ── */
+  /* ── CARDS ── */
   .card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 20px; margin-bottom: 14px; }
   .card-title { font-size: 13px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--text-muted); margin-bottom: 16px; display: flex; align-items: center; gap: 6px; }
 
-  /* ── INTERACTIVE SELECTION (RESIDUOS) ── */
+  /* ── RESIDUOS ── */
   .residuos-selector { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 16px; }
-  .residuo-node {
-    border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 12px; cursor: pointer; text-align: center; transition: all 0.2s; background: var(--surface);
-  }
+  .residuo-node { border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 12px; cursor: pointer; text-align: center; transition: all 0.2s; background: var(--surface); }
   .residuo-node:hover { border-color: var(--green-mid); background: var(--green-pale); }
   .residuo-node.selected { border-color: var(--green-bright); background: var(--green-light); color: var(--green-deep); font-weight: 600; }
   .residuo-icon { font-size: 20px; margin-bottom: 4px; }
   .residuo-label { font-size: 12px; }
 
-  /* ── MAP & LISTS ── */
+  /* ── MAP ── */
   .map-wrapper { width: 100%; height: 220px; border-radius: var(--radius-sm); overflow: hidden; border: 1px solid var(--border-strong); margin-bottom: 16px; }
-  
-  .route-card {
-    background: var(--surface); border-left: 4px solid var(--green-mid); padding: 14px; margin-bottom: 10px; border-top: 1px solid var(--border); border-right: 1px solid var(--border); border-bottom: 1px solid var(--border); border-radius: 0 var(--radius-sm) var(--radius-sm) 0; display: flex; justify-content: space-between; align-items: center;
-  }
+  .route-card { background: var(--surface); border-left: 4px solid var(--green-mid); padding: 14px; margin-bottom: 10px; border-top: 1px solid var(--border); border-right: 1px solid var(--border); border-bottom: 1px solid var(--border); border-radius: 0 var(--radius-sm) var(--radius-sm) 0; display: flex; justify-content: space-between; align-items: center; }
   .route-info h4 { font-size: 14px; color: var(--green-deep); font-weight: 600; }
   .route-info p { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
   .route-badge { font-size: 11px; background: var(--green-light); color: var(--green-deep); padding: 4px 10px; border-radius: 20px; font-weight: 600; }
 
-  /* ── FORMS & INPUTS ── */
+  /* ── FORMS ── */
   .form-desc { font-size: 13px; color: var(--text-muted); line-height: 1.6; margin-bottom: 16px; }
   .field { margin-bottom: 14px; }
   .field label { display: block; font-size: 11px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--text-muted); margin-bottom: 6px; }
@@ -208,14 +213,6 @@
   .info-block-text h4 { font-size: 14px; color: var(--green-deep); font-weight: 700; margin-bottom: 2px; }
   .info-block-text p { font-size: 12px; color: var(--text-muted); line-height: 1.5; }
 
-  /* ── REVIEWS & STARS ── */
-  .review-stars { color: var(--gold); font-size: 14px; margin-top: 4px; }
-
-  /* ── BUTTONS ── */
-  .btn-primary { width: 100%; padding: 14px; background: var(--green-deep); color: #fff; border: none; border-radius: var(--radius-sm); font-size: 14px; font-weight: 600; cursor: pointer; font-family: 'Plus Jakarta Sans', sans-serif; display: flex; align-items: center; justify-content: center; gap: 8px; transition: all .15s; }
-  .btn-primary:hover { background: #112a1e; }
-  .btn-outline { width: 100%; padding: 12px; background: transparent; color: var(--green-deep); border: 1px solid var(--green-deep); border-radius: var(--radius-sm); font-size: 13px; font-weight: 600; cursor: pointer; text-align: center; margin-top: 8px; display: block; text-decoration: none; }
-
   /* ── HISTORIAL ── */
   .history-row { display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid var(--border); }
   .history-row:last-child { border-bottom: none; }
@@ -225,8 +222,72 @@
   .history-date { font-size: 11px; color: var(--text-faint); font-family: 'DM Mono', monospace; }
   .history-reward { font-family: 'DM Mono', monospace; font-size: 14px; font-weight: 600; color: var(--green-mid); }
 
-  /* UI ELEMENT TOGGLES */
+  /* ── BUTTONS ── */
+  .btn-primary { width: 100%; padding: 14px; background: var(--green-deep); color: #fff; border: none; border-radius: var(--radius-sm); font-size: 14px; font-weight: 600; cursor: pointer; font-family: 'Plus Jakarta Sans', sans-serif; display: flex; align-items: center; justify-content: center; gap: 8px; transition: all .15s; }
+  .btn-primary:hover { background: #112a1e; }
+  .btn-primary:disabled { opacity: .5; cursor: not-allowed; }
+  .btn-outline { width: 100%; padding: 12px; background: transparent; color: var(--green-deep); border: 1px solid var(--green-deep); border-radius: var(--radius-sm); font-size: 13px; font-weight: 600; cursor: pointer; text-align: center; margin-top: 8px; display: block; text-decoration: none; }
+
+  /* ── TX FEEDBACK ── */
+  .tx-feedback { margin-top: 12px; padding: 14px; border-radius: var(--radius-sm); display: none; animation: fadeIn .3s ease; }
+  .tx-feedback.show { display: flex; align-items: flex-start; gap: 10px; }
+  .tx-feedback.success { background: var(--green-pale); border: 1px solid rgba(82,183,136,0.35); }
+  .tx-feedback.error { background: var(--red-light); border: 1px solid rgba(192,57,43,0.3); }
+  .tx-icon { font-size: 18px; flex-shrink: 0; }
+  .tx-text { font-size: 13px; line-height: 1.6; }
+  .tx-text.success { color: var(--green-deep); }
+  .tx-text.error { color: var(--red); }
+  .tx-hash { font-family: 'DM Mono', monospace; font-size: 11px; color: var(--text-muted); word-break: break-all; margin-top: 4px; }
+  .tx-hash a { color: var(--green-mid); text-decoration: underline; }
+
+  /* ── SPINNER ── */
+  .spinner { width: 16px; height: 16px; border: 2px solid rgba(255,255,255,0.3); border-top-color: #fff; border-radius: 50%; animation: spin .6s linear infinite; display: none; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  @keyframes fadeIn { from { opacity:0; transform:translateY(4px); } to { opacity:1; transform:translateY(0); } }
+
+  /* ── CONTRACT INFO BOX ── */
+  .contract-box {
+    background: var(--gold-light);
+    border: 1px solid rgba(201,168,76,0.3);
+    border-radius: var(--radius-sm);
+    padding: 12px 14px;
+    margin-bottom: 16px;
+    font-size: 12px;
+  }
+  .contract-box-label { font-weight: 700; color: var(--gold); font-size: 11px; letter-spacing: .06em; text-transform: uppercase; margin-bottom: 4px; }
+  .contract-box-addr { font-family: 'DM Mono', monospace; color: var(--text-muted); word-break: break-all; font-size: 11px; }
+
+  .review-stars { color: var(--gold); font-size: 14px; margin-top: 4px; }
   #view-reciclador, #view-rutas, #view-empresas, #view-info { display: none; }
+
+  /* ── WALLET GATE ── */
+  .wallet-gate {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 32px 20px;
+    text-align: center;
+    margin-bottom: 14px;
+  }
+  .wallet-gate-icon { font-size: 36px; margin-bottom: 12px; }
+  .wallet-gate h3 { font-family: 'Fraunces', serif; font-size: 20px; color: var(--green-deep); margin-bottom: 8px; }
+  .wallet-gate p { font-size: 13px; color: var(--text-muted); line-height: 1.6; margin-bottom: 20px; }
+  .btn-connect-cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 24px;
+    background: var(--green-deep);
+    color: #fff;
+    border: none;
+    border-radius: var(--radius-sm);
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    transition: background .15s;
+  }
+  .btn-connect-cta:hover { background: #112a1e; }
 </style>
 </head>
 <body>
@@ -238,105 +299,179 @@
         <div class="logo-icon">🌱</div>
         <div class="logo-text">Eco<span>Ruta</span> Celo</div>
       </div>
-      <span class="cali-badge">CALI ☀️</span>
+      <div style="display:flex;align-items:center;gap:8px;flex-shrink:0">
+        <span class="cali-badge">CALI ☀️</span>
+        <!--
+          ════════════════════════════════════════
+          BOTÓN CONECTAR BILLETERA
+          - Estado inicial: "Conectar billetera"
+          - Estado conectado: muestra dirección truncada
+          - Estado error: muestra mensaje corto
+          ════════════════════════════════════════
+        -->
+        <button id="btn-wallet" onclick="connectWallet()">
+          <span class="wallet-dot" id="wallet-dot"></span>
+          <span id="wallet-label">Conectar Rabby</span>
+        </button>
+      </div>
     </div>
-    
+
+    <!-- ALERTA: cambiar a red Celo si MetaMask está en otra red -->
+    <div id="network-warning">
+      <span>⚠️</span>
+      <div class="nw-text">Tu billetera está en una red distinta a Celo. Cambia para usar EcoRuta.</div>
+      <button id="btn-switch-network" onclick="switchToCelo()">Cambiar a Celo</button>
+    </div>
+
     <div class="tabs-container">
       <div class="tabs">
-        <button class="tab-btn active" onclick="switchRole('ciudadano', this)">🏠 Hogar</button>
-        <button class="tab-btn" onclick="switchRole('reciclador', this)">🚛 Reciclador</button>
-        <button class="tab-btn" onclick="switchRole('rutas', this)">🗺️ EcoRutas</button>
-        <button class="tab-btn" onclick="switchRole('empresas', this)">🏢 Empresas REP</button>
-        <button class="tab-btn" onclick="switchRole('info', this)">📖 Info ReFi</button>
+        <button class="tab-btn active" onclick="switchTab('ciudadano', this)">🏠 Hogar</button>
+        <button class="tab-btn" onclick="switchTab('reciclador', this)">🚛 Reciclador</button>
+        <button class="tab-btn" onclick="switchTab('rutas', this)">🗺️ EcoRutas</button>
+        <button class="tab-btn" onclick="switchTab('empresas', this)">🏢 Empresas REP</button>
+        <button class="tab-btn" onclick="switchTab('info', this)">📖 Info ReFi</button>
       </div>
     </div>
   </header>
 
+  <!-- BANNER BILLETERA CONECTADA -->
+  <div id="wallet-banner">
+    <div class="banner-icon" id="banner-icon">🔗</div>
+    <div class="banner-body">
+      <div class="banner-title" id="banner-title">Billetera conectada</div>
+      <div class="banner-sub" id="banner-sub"></div>
+    </div>
+  </div>
+
+  <!-- ══ HOGAR ══ -->
   <div id="view-ciudadano">
-    <div class="balance-card">
-      <div class="balance-label">Mis Eco-Incentivos acumulados</div>
-      <div class="balance-amount">24.80<span class="balance-currency">cUSD</span></div>
-      <div class="net-pill"><span class="net-dot"></span> Celo Blockchain Live</div>
+
+    <!-- Si NO hay billetera, mostrar gate de conexión -->
+    <div id="ciudadano-gate" class="wallet-gate" style="display:none">
+      <div class="wallet-gate-icon">🌱</div>
+      <h3>Conecta tu billetera</h3>
+      <p>Para ver tu balance, acumular incentivos y registrar tus entregas en la blockchain de Celo, necesitas conectar tu billetera primero.</p>
+      <button class="btn-connect-cta" onclick="connectWallet()">🔗 Conectar con Rabby Wallet</button>
     </div>
 
-    <div class="card">
-      <div class="card-title">📦 ¿Qué vas a separar hoy en casa?</div>
-      <p class="form-desc">Selecciona tu residuo para clasificarlo antes de la ruta:</p>
-      <div class="residuos-selector">
-        <div class="residuo-node" id="r1" onclick="selectResiduo('r1')">
-          <div class="residuo-icon">🥤</div>
-          <div class="residuo-label">Plástico PET</div>
-        </div>
-        <div class="residuo-node" id="r2" onclick="selectResiduo('r2')">
-          <div class="residuo-icon">📦</div>
-          <div class="residuo-label">Cartón / Papel</div>
-        </div>
+    <!-- Contenido normal (visible cuando hay billetera) -->
+    <div id="ciudadano-content">
+      <div class="balance-card">
+        <div class="balance-label">Mis Eco-Incentivos acumulados</div>
+        <div class="balance-amount" id="display-balance">24.80<span class="balance-currency">cUSD</span></div>
+        <div class="net-pill"><span class="net-dot"></span> Celo Blockchain Live</div>
       </div>
-      <button class="btn-primary" onclick="alert('¡Genial! Tu reporte ha sido agendado para la próxima EcoRuta de tu zona.')">Programar Entrega en mi Casa</button>
-    </div>
 
-    <div class="card">
-      <div class="card-title">⏱️ Historial de mi Impacto Ambiental</div>
-      <div class="history-row">
-        <div class="history-left">
-          <div class="history-icon">♻️</div>
-          <div>
-            <div class="history-main">6.4 kg — Plástico PET</div>
-            <div class="history-date">Barrio San Fernando — Hace 2 días</div>
+      <div class="card">
+        <div class="card-title">📦 ¿Qué vas a separar hoy en casa?</div>
+        <p class="form-desc">Selecciona tu residuo para clasificarlo antes de la ruta:</p>
+        <div class="residuos-selector">
+          <div class="residuo-node" id="r1" onclick="selectResiduo('r1')">
+            <div class="residuo-icon">🥤</div>
+            <div class="residuo-label">Plástico PET</div>
+          </div>
+          <div class="residuo-node" id="r2" onclick="selectResiduo('r2')">
+            <div class="residuo-icon">📦</div>
+            <div class="residuo-label">Cartón / Papel</div>
           </div>
         </div>
-        <div class="history-reward">+3.20 cUSD</div>
+        <button class="btn-primary" onclick="schedulePickup()">Programar Entrega en mi Casa</button>
       </div>
-      <div class="history-row">
-        <div class="history-left">
-          <div class="history-icon">♻️</div>
-          <div>
-            <div class="history-main">12.0 kg — Cartón prensado</div>
-            <div class="history-date">Barrio Ciudad Jardín — 2026-05-28</div>
+
+      <div class="card">
+        <div class="card-title">⏱️ Historial de mi Impacto Ambiental</div>
+        <div class="history-row">
+          <div class="history-left">
+            <div class="history-icon">♻️</div>
+            <div>
+              <div class="history-main">6.4 kg — Plástico PET</div>
+              <div class="history-date">Barrio San Fernando — Hace 2 días</div>
+            </div>
           </div>
+          <div class="history-reward">+3.20 cUSD</div>
         </div>
-        <div class="history-reward">+4.80 cUSD</div>
+        <div class="history-row">
+          <div class="history-left">
+            <div class="history-icon">♻️</div>
+            <div>
+              <div class="history-main">12.0 kg — Cartón prensado</div>
+              <div class="history-date">Barrio Ciudad Jardín — 2026-05-28</div>
+            </div>
+          </div>
+          <div class="history-reward">+4.80 cUSD</div>
+        </div>
       </div>
     </div>
   </div>
 
+  <!-- ══ RECICLADOR ══ -->
   <div id="view-reciclador">
     <div class="card">
       <div class="card-title">🔧 Báscula Digital On-Chain</div>
-      <p class="form-desc">Panel exclusivo para recicladores tradicionales certificados de Cali.</p>
+      <p class="form-desc">Panel exclusivo para recicladores tradicionales certificados de Cali. Cada registro queda firmado en la blockchain de Celo.</p>
+
+      <!--
+        ════════════════════════════════════════════════════
+        CONTRATO INTELIGENTE
+        Cambia CONTRACT_ADDRESS por la dirección real de tu
+        contrato desplegado en Celo Alfajores (testnet) o
+        Celo Mainnet.
+        ════════════════════════════════════════════════════
+      -->
+      <div class="contract-box">
+        <div class="contract-box-label">📋 Smart Contract Desplegado</div>
+        <div class="contract-box-addr" id="display-contract-addr">0x… ← pon aquí tu dirección</div>
+      </div>
 
       <div class="field">
         <label>ID o Billetera Celo del Ciudadano</label>
-        <input type="text" placeholder="Celular (+57) o Dirección 0x...">
+        <input type="text" id="inp-recipient" placeholder="Celular (+57) o dirección 0x…">
       </div>
 
       <div class="field">
         <label>Tipo de Residuo Verificado</label>
-        <select>
-          <option>Plástico PET Comercial</option>
-          <option>Cartón Limpio Grado A</option>
-          <option>Aluminio / Latas</option>
+        <select id="inp-material">
+          <option value="PET">Plástico PET Comercial</option>
+          <option value="CARTON">Cartón Limpio Grado A</option>
+          <option value="ALUMINIO">Aluminio / Latas</option>
         </select>
       </div>
 
       <div class="field">
         <label>Kilogramos en Báscula</label>
-        <input type="number" placeholder="Ej. 14.2" step="0.1">
+        <input type="number" id="inp-kilos" placeholder="Ej. 14.2" step="0.1" min="0">
       </div>
 
-      <button class="btn-primary" onclick="alert('Procesando firma en Smart Contract... ¡Incentivo enviado exitosamente!')">Validar Peso y Emitir cUSD</button>
+      <!--
+        Al hacer clic este botón llama a registrarReciclaje()
+        en el smart contract a través de ethers.js
+      -->
+      <button class="btn-primary" id="btn-registrar" onclick="registrarReciclaje()">
+        <span class="spinner" id="spin-registrar"></span>
+        <span id="label-registrar">Validar Peso y Emitir cUSD</span>
+      </button>
+
+      <!-- Feedback de la transacción -->
+      <div class="tx-feedback" id="tx-feedback">
+        <div class="tx-icon" id="tx-icon"></div>
+        <div>
+          <div class="tx-text" id="tx-text"></div>
+          <div class="tx-hash" id="tx-hash"></div>
+        </div>
+      </div>
     </div>
   </div>
 
+  <!-- ══ ECORRUTAS ══ -->
   <div id="view-rutas">
     <div class="card">
       <div class="card-title">🗺️ Mapa de Recolección en Cali</div>
       <p class="form-desc">Visualiza las rutas activas y los centros de acopio autorizados en la capital del Valle.</p>
-      
       <div class="map-wrapper">
-        <iframe width="100%" height="100%" frameborder="0" src="https://www.openstreetmap.org/export/embed.html?bbox=-76.570%2C3.340%2C-76.480%2C3.480&amp;layer=mapnik&amp;marker=3.4516%2C-76.5320"></iframe>
+        <iframe width="100%" height="100%" frameborder="0"
+          src="https://www.openstreetmap.org/export/embed.html?bbox=-76.570%2C3.340%2C-76.480%2C3.480&amp;layer=mapnik&amp;marker=3.4516%2C-76.5320">
+        </iframe>
       </div>
-
       <div class="route-card">
         <div class="route-info">
           <h4>Ruta Recicladores Organizados del Norte</h4>
@@ -344,7 +479,6 @@
         </div>
         <span class="route-badge">En Vivo 🚚</span>
       </div>
-
       <div class="route-card">
         <div class="route-info">
           <h4>Centro de Acopio Principal San Fernando</h4>
@@ -355,11 +489,11 @@
     </div>
   </div>
 
+  <!-- ══ EMPRESAS REP ══ -->
   <div id="view-empresas">
     <div class="card">
       <div class="card-title">🏢 Portal Corporativo de Sostenibilidad</div>
-      <p class="form-desc">Aquí es donde las grandes empresas inyectan fondos al sistema comprando "Créditos Blockchain de Plástico" para cumplir con la ley de reciclaje colombiana.</p>
-      
+      <p class="form-desc">Las grandes empresas inyectan fondos al sistema comprando "Créditos Blockchain de Plástico" para cumplir la ley de reciclaje colombiana.</p>
       <div class="info-block">
         <div class="info-block-icon">📊</div>
         <div class="info-block-text">
@@ -367,16 +501,14 @@
           <p>Capital total depositado por empresas este mes: <strong>14,500 cUSD</strong> para financiar micro-recompensas en Cali.</p>
         </div>
       </div>
-
       <div class="field">
         <label>Empresa Financiadora</label>
-        <select id="empresa-select">
+        <select>
           <option>Postobón S.A.</option>
           <option>Bavaria Colombia</option>
           <option>Coca-Cola Femsa Cali</option>
         </select>
       </div>
-
       <div class="field">
         <label>Estrategia Ambiental Apoyada</label>
         <select>
@@ -384,20 +516,18 @@
           <option>Estrategia: Reciclaje Masivo en Comunas del Sur</option>
         </select>
       </div>
-
-      <button class="btn-primary" onclick="alert('¡Gracias por tu calificación! Tu retroalimentación empresarial se ha guardado de forma transparente en la red Celo.')">Calificar e Impulsar Estrategia</button>
-      
+      <button class="btn-primary" onclick="alert('¡Gracias! Retroalimentación guardada en la red Celo.')">Calificar e Impulsar Estrategia</button>
       <div style="margin-top:20px; font-size:12px; color:var(--text-muted);">
-        <strong>Últimas calificaciones de empresas:</strong>
+        <strong>Últimas calificaciones:</strong>
         <div class="review-stars">⭐⭐⭐⭐⭐ <span style="color:var(--text); font-size:11px;">Postobón calificó Ruta Norte</span></div>
       </div>
     </div>
   </div>
 
+  <!-- ══ INFO REFI ══ -->
   <div id="view-info">
     <div class="card">
       <div class="card-title">🌱 ¿Cómo funciona la economía de EcoRuta?</div>
-      
       <div class="info-block">
         <div class="info-block-icon">❓</div>
         <div class="info-block-text">
@@ -405,7 +535,6 @@
           <p>Las corporaciones obligadas por la ley nacional de reciclaje compran créditos blockchain transparentes. Ese dinero va directo a tu billetera.</p>
         </div>
       </div>
-
       <div class="info-block">
         <div class="info-block-icon">💵</div>
         <div class="info-block-text">
@@ -413,7 +542,6 @@
           <p>Es el Dólar Digital de la red Celo. Cada cUSD equivale exactamente a un dólar real. Lo recibes seguro en tu app y puedes cambiarlo a pesos colombianos.</p>
         </div>
       </div>
-
       <div class="info-block">
         <div class="info-block-icon">🤝</div>
         <div class="info-block-text">
@@ -421,35 +549,316 @@
           <p>Dignificamos el trabajo de los recicladores tradicionales de Cali dándoles comisiones extras por actuar como los auditores de impacto del sistema.</p>
         </div>
       </div>
-
       <a href="https://celo.org" target="_blank" class="btn-outline">Conocer más sobre el ecosistema Celo</a>
     </div>
   </div>
 
-</div>
+</div><!-- /shell -->
 
 <script>
-  function switchRole(role, buttonElement) {
-    // Apagar todos los botones
-    document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
-    // Encender botón presionado
-    buttonElement.classList.add('active');
-    
-    // Ocultar todas las secciones
-    document.getElementById('view-ciudadano').style.display = 'none';
-    document.getElementById('view-reciclador').style.display = 'none';
-    document.getElementById('view-rutas').style.display = 'none';
-    document.getElementById('view-empresas').style.display = 'none';
-    document.getElementById('view-info').style.display = 'none';
-    
-    // Mostrar la sección correcta
-    document.getElementById('view-' + role).style.display = 'block';
+/* ════════════════════════════════════════════════════════════════
+   CONFIGURACIÓN DE RED Y CONTRATO
+   ════════════════════════════════════════════════════════════════
+
+   Celo Alfajores Testnet (para desarrollo/bootcamp):
+     chainId:  '0xaef3'  (44787 en decimal)
+     rpcUrl:   'https://alfajores-forno.celo-testnet.org'
+     explorer: 'https://alfajores.celoscan.io'
+
+   Celo Mainnet (para producción):
+     chainId:  '0xa4ec'  (42220 en decimal)
+     rpcUrl:   'https://forno.celo.org'
+     explorer: 'https://celoscan.io'
+
+   ⚠️  Cambia CONTRACT_ADDRESS por la dirección real de tu contrato.
+   ════════════════════════════════════════════════════════════════ */
+const CELO_CHAIN_ID    = '0xaef3';           // Celo Alfajores Testnet (44787)
+const CELO_RPC         = 'https://alfajores-forno.celo-testnet.org';
+const CELO_EXPLORER    = 'https://alfajores.celoscan.io';
+const CONTRACT_ADDRESS = '0xTU_CONTRATO_AQUI'; // ← se actualiza cuando despliegues el contrato
+
+/* ════════════════════════════════════════════════════════════════
+   ABI DEL CONTRATO
+   Solo incluimos las funciones que la app necesita llamar.
+   Ajusta los nombres de función al ABI real de tu contrato.
+   ════════════════════════════════════════════════════════════════ */
+const CONTRACT_ABI = [
+  // Función principal: el reciclador registra kilogramos y el contrato
+  // emite cUSD al ciudadano.
+  // Ajusta el nombre 'registrarReciclaje' y los parámetros a tu contrato.
+  "function registrarReciclaje(address ciudadano, uint256 kilogramos, string material) external",
+
+  // Función de lectura: consulta el balance de incentivos de una dirección.
+  "function balanceDe(address cuenta) view returns (uint256)",
+
+  // Evento que emite el contrato al registrar reciclaje (para escuchar confirmaciones).
+  "event ReciclajeRegistrado(address indexed ciudadano, uint256 kilogramos, uint256 tokens, string material)"
+];
+
+/* ─── Estado global de la billetera ─── */
+let provider = null;
+let signer   = null;
+let contract = null;
+let connectedAddress = null;
+
+/* ════════════════════════════════════════════════════════════════
+   connectWallet()
+   - Pide permiso a MetaMask
+   - Verifica que estemos en Celo
+   - Si no, muestra la advertencia de red
+   - Actualiza la UI
+   ════════════════════════════════════════════════════════════════ */
+async function connectWallet() {
+  if (typeof window.ethereum === 'undefined') {
+    showBanner('error', '⚠️', 'Rabby no detectado',
+      'Instala Rabby Wallet como extensión del navegador y recarga la página.');
+    setWalletBtn('error', 'Sin billetera');
+    return;
   }
 
-  function selectResiduo(id) {
-    document.querySelectorAll('.residuo-node').forEach(node => node.classList.remove('selected'));
-    document.getElementById(id).classList.add('selected');
+  try {
+    setWalletBtn('loading', 'Conectando…');
+
+    // Solicitar acceso a las cuentas
+    await window.ethereum.request({ method: 'eth_requestAccounts' });
+
+    provider = new ethers.providers.Web3Provider(window.ethereum);
+    signer   = provider.getSigner();
+    connectedAddress = await signer.getAddress();
+
+    // Verificar red
+    const network = await provider.getNetwork();
+    const currentChainId = '0x' + network.chainId.toString(16);
+
+    if (currentChainId !== CELO_CHAIN_ID) {
+      setWalletBtn('error', 'Red incorrecta');
+      document.getElementById('network-warning').classList.add('show');
+      showBanner('error', '⚠️', 'Red equivocada',
+        `Estás en chainId ${network.chainId}. Necesitas Celo Alfajores (44787).`);
+      return;
+    }
+
+    // Todo OK → instanciar contrato
+    contract = new ethers.Contract(CONTRACT_ADDRESS, CONTRACT_ABI, signer);
+
+    // Actualizar UI
+    document.getElementById('network-warning').classList.remove('show');
+    const short = connectedAddress.slice(0,6) + '…' + connectedAddress.slice(-4);
+    setWalletBtn('connected', short);
+    showBanner('ok', '🔗', 'Billetera conectada en Celo',
+      connectedAddress);
+    updateCiudadanoGate(true);
+
+    // Intentar leer el balance del contrato (si ya está desplegado)
+    await fetchContractBalance();
+
+    // Mostrar la dirección del contrato en el panel reciclador
+    document.getElementById('display-contract-addr').textContent = CONTRACT_ADDRESS;
+
+  } catch (err) {
+    console.error(err);
+    setWalletBtn('error', 'Error');
+    showBanner('error', '❌', 'No se pudo conectar',
+      err.message || 'El usuario rechazó la conexión.');
+    connectedAddress = null;
+    updateCiudadanoGate(false);
   }
+}
+
+/* ════════════════════════════════════════════════════════════════
+   switchToCelo()
+   Añade y cambia a la red Celo Alfajores automáticamente.
+   ════════════════════════════════════════════════════════════════ */
+async function switchToCelo() {
+  try {
+    await window.ethereum.request({
+      method: 'wallet_switchEthereumChain',
+      params: [{ chainId: CELO_CHAIN_ID }],
+    });
+  } catch (switchError) {
+    // Error 4902: la red no está agregada aún → agregarla
+    if (switchError.code === 4902) {
+      try {
+        await window.ethereum.request({
+          method: 'wallet_addEthereumChain',
+          params: [{
+            chainId: CELO_CHAIN_ID,
+            chainName: 'Celo Alfajores Testnet',
+            nativeCurrency: { name: 'CELO', symbol: 'CELO', decimals: 18 },
+            rpcUrls: [CELO_RPC],
+            blockExplorerUrls: [CELO_EXPLORER],
+          }],
+        });
+      } catch (addError) {
+        alert('No se pudo agregar la red Celo. Agrégala manualmente en MetaMask.');
+      }
+    }
+  }
+  // Reconectar después de cambio de red
+  setTimeout(connectWallet, 800);
+}
+
+/* ════════════════════════════════════════════════════════════════
+   registrarReciclaje()
+   Llama a la función del smart contract que registra
+   los kilogramos reciclados y emite cUSD al ciudadano.
+   ════════════════════════════════════════════════════════════════ */
+async function registrarReciclaje() {
+  const recipient = document.getElementById('inp-recipient').value.trim();
+  const kilosStr  = document.getElementById('inp-kilos').value.trim();
+  const material  = document.getElementById('inp-material').value;
+
+  if (!recipient || !kilosStr) {
+    showTxFeedback('error', '⚠️', 'Completa todos los campos antes de continuar.', '');
+    return;
+  }
+
+  if (!connectedAddress) {
+    showTxFeedback('error', '🔗', 'Primero conecta tu billetera de reciclador.', '');
+    return;
+  }
+
+  // Convertir kilogramos a entero × 100 (p.ej. 14.2 kg → 1420)
+  // Ajusta esta lógica según cómo tu contrato espera el valor.
+  const kilogramos = Math.round(parseFloat(kilosStr) * 100);
+
+  setRegistrarLoading(true);
+  showTxFeedback('', '', '', ''); // limpiar
+
+  try {
+    // ── LLAMADA AL SMART CONTRACT ──────────────────────────────
+    const tx = await contract.registrarReciclaje(recipient, kilogramos, material);
+    showTxFeedback('success', '⏳',
+      `Transacción enviada. Esperando confirmación en Celo…`,
+      `Hash: ${tx.hash}`);
+
+    // Esperar confirmación (1 bloque)
+    const receipt = await tx.wait(1);
+
+    showTxFeedback('success', '✅',
+      `¡Registro confirmado! ${kilosStr} kg de ${material} procesados.`,
+      `Tx: <a href="${CELO_EXPLORER}/tx/${receipt.transactionHash}" target="_blank">${receipt.transactionHash.slice(0,18)}…</a>`);
+
+    // Limpiar campos
+    document.getElementById('inp-recipient').value = '';
+    document.getElementById('inp-kilos').value     = '';
+
+  } catch (err) {
+    console.error(err);
+    const msg = err?.reason || err?.message || 'Error desconocido';
+    showTxFeedback('error', '❌', `La transacción falló: ${msg}`, '');
+  }
+
+  setRegistrarLoading(false);
+}
+
+/* ════════════════════════════════════════════════════════════════
+   fetchContractBalance()
+   Lee el balance de cUSD del usuario directamente del contrato.
+   Si el contrato aún no está desplegado, muestra el valor mock.
+   ════════════════════════════════════════════════════════════════ */
+async function fetchContractBalance() {
+  if (!contract || !connectedAddress) return;
+  if (CONTRACT_ADDRESS === '0xTU_CONTRATO_AQUI') return; // contrato no configurado
+
+  try {
+    const raw = await contract.balanceDe(connectedAddress);
+    // El contrato devuelve el valor en wei (18 decimales)
+    const formatted = parseFloat(ethers.utils.formatEther(raw)).toFixed(2);
+    document.getElementById('display-balance').innerHTML =
+      `${formatted}<span class="balance-currency">cUSD</span>`;
+  } catch (e) {
+    // Contrato aún no desplegado o función no disponible → mantener valor mock
+    console.warn('balanceDe no disponible:', e.message);
+  }
+}
+
+/* ════════════════════════════════════════════════════════════════
+   Escuchar cambios de cuenta / red en MetaMask
+   ════════════════════════════════════════════════════════════════ */
+if (typeof window.ethereum !== 'undefined') {
+  window.ethereum.on('accountsChanged', (accounts) => {
+    if (accounts.length === 0) {
+      // Usuario desconectó su billetera
+      connectedAddress = null;
+      setWalletBtn('default', 'Conectar billetera');
+      document.getElementById('wallet-banner').classList.remove('show');
+      updateCiudadanoGate(false);
+    } else {
+      connectWallet(); // reconectar con nueva cuenta
+    }
+  });
+
+  window.ethereum.on('chainChanged', () => {
+    // MetaMask recomienda recargar al cambiar de red
+    window.location.reload();
+  });
+}
+
+/* ────── Helpers de UI ────── */
+
+function setWalletBtn(state, label) {
+  const btn = document.getElementById('btn-wallet');
+  btn.className = state === 'connected' ? 'connected' : state === 'error' ? 'error' : '';
+  document.getElementById('wallet-label').textContent = label;
+}
+
+function showBanner(type, icon, title, sub) {
+  const banner = document.getElementById('wallet-banner');
+  banner.className = type === 'error' ? 'show error' : 'show';
+  document.getElementById('banner-icon').textContent  = icon;
+  document.getElementById('banner-title').textContent = title;
+  document.getElementById('banner-sub').textContent   = sub;
+}
+
+function showTxFeedback(type, icon, text, hash) {
+  const el = document.getElementById('tx-feedback');
+  if (!type) { el.className = 'tx-feedback'; return; }
+  el.className = `tx-feedback show ${type}`;
+  document.getElementById('tx-icon').textContent  = icon;
+  const textEl = document.getElementById('tx-text');
+  textEl.textContent = text;
+  textEl.className = `tx-text ${type}`;
+  document.getElementById('tx-hash').innerHTML = hash;
+}
+
+function setRegistrarLoading(loading) {
+  document.getElementById('btn-registrar').disabled = loading;
+  document.getElementById('spin-registrar').style.display = loading ? 'block' : 'none';
+  document.getElementById('label-registrar').textContent  =
+    loading ? 'Procesando en blockchain…' : 'Validar Peso y Emitir cUSD';
+}
+
+function updateCiudadanoGate(connected) {
+  document.getElementById('ciudadano-gate').style.display    = connected ? 'none' : 'block';
+  document.getElementById('ciudadano-content').style.display = connected ? 'block' : 'none';
+}
+
+/* ────── Tabs & Residuos ────── */
+
+function switchTab(role, buttonElement) {
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  buttonElement.classList.add('active');
+  ['ciudadano','reciclador','rutas','empresas','info'].forEach(v => {
+    document.getElementById('view-' + v).style.display = v === role ? 'block' : 'none';
+  });
+}
+
+function selectResiduo(id) {
+  document.querySelectorAll('.residuo-node').forEach(n => n.classList.remove('selected'));
+  document.getElementById(id).classList.add('selected');
+}
+
+function schedulePickup() {
+  if (!connectedAddress) {
+    alert('Primero conecta tu billetera para programar una entrega.');
+    return;
+  }
+  alert('¡Genial! Tu entrega ha sido agendada para la próxima EcoRuta de tu zona.');
+}
+
+/* ── Inicializar: si no hay billetera, mostrar gate en Hogar ── */
+updateCiudadanoGate(false);
 </script>
 </body>
 </html>

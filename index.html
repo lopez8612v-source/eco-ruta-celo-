@@ -379,10 +379,16 @@
         <div class="net-pill"><span class="net-dot"></span> Celo Blockchain Live</div>
       </div>
 
+      <!-- SOLICITAR RECOLECCIÓN -->
       <div class="card">
-        <div class="card-title">📦 ¿Qué vas a separar hoy en casa?</div>
-        <p class="form-desc">Selecciona tu residuo para clasificarlo antes de la ruta:</p>
-        <div class="residuos-selector">
+        <div class="card-title">📍 Solicitar Recolección a Domicilio</div>
+        <p class="form-desc">Sigue los 3 pasos para que un reciclador certificado pase por tu casa y ganes tus cUSD.</p>
+
+        <!-- PASO 1: Tipo de residuo -->
+        <div style="font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--text-faint);margin-bottom:8px;">
+          Paso 1 — ¿Qué vas a entregar?
+        </div>
+        <div class="residuos-selector" style="margin-bottom:16px">
           <div class="residuo-node" id="r1" onclick="selectResiduo('r1')">
             <div class="residuo-icon">🥤</div>
             <div class="residuo-label">Plástico PET</div>
@@ -391,21 +397,51 @@
             <div class="residuo-icon">📦</div>
             <div class="residuo-label">Cartón / Papel</div>
           </div>
-        </div>
-        <!-- FOTO DEL CIUDADANO -->
-        <div class="field" style="margin-top:14px">
-          <label>📸 Foto de tus residuos separados</label>
-          <div class="photo-upload-box" id="foto-ciudadano-box" onclick="document.getElementById('foto-ciudadano').click()">
-            <div class="photo-upload-placeholder" id="foto-ciudadano-placeholder">
-              <div style="font-size:28px;margin-bottom:6px">📷</div>
-              <div style="font-size:13px;color:var(--text-muted)">Toca para tomar foto o elegir de galería</div>
-              <div style="font-size:11px;color:var(--text-faint);margin-top:4px">Muestra los residuos listos para recoger</div>
-            </div>
-            <img id="foto-ciudadano-preview" style="display:none;width:100%;border-radius:8px;max-height:180px;object-fit:cover">
+          <div class="residuo-node" id="r3" onclick="selectResiduo('r3')">
+            <div class="residuo-icon">🥫</div>
+            <div class="residuo-label">Aluminio / Latas</div>
           </div>
-          <input type="file" id="foto-ciudadano" accept="image/*" capture="environment" style="display:none" onchange="previewFoto('foto-ciudadano')">
+          <div class="residuo-node" id="r4" onclick="selectResiduo('r4')">
+            <div class="residuo-icon">🍶</div>
+            <div class="residuo-label">Vidrio</div>
+          </div>
         </div>
-        <button class="btn-primary" onclick="schedulePickup()">📍 Solicitar Recolección en mi Casa</button>
+
+        <!-- PASO 2: Dirección -->
+        <div style="font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--text-faint);margin-bottom:8px;">
+          Paso 2 — ¿Dónde te recogemos?
+        </div>
+        <div class="field">
+          <input type="text" id="inp-direccion" placeholder="Ej. Calle 5 #38-20, Barrio San Fernando, Cali">
+        </div>
+
+        <!-- PASO 3: Foto de los residuos -->
+        <div style="font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--text-faint);margin-bottom:8px;">
+          Paso 3 — Foto de tus residuos separados
+        </div>
+        <p style="font-size:12px;color:var(--text-muted);margin-bottom:10px;line-height:1.5;">
+          Esta foto queda vinculada a tu solicitud como prueba de impacto. El reciclador la verá antes de llegar.
+        </p>
+        <div class="photo-upload-box" id="foto-ciudadano-box" onclick="document.getElementById('foto-ciudadano').click()">
+          <div class="photo-upload-placeholder" id="foto-ciudadano-placeholder">
+            <div style="font-size:32px;margin-bottom:8px">📷</div>
+            <div style="font-size:13px;color:var(--text-muted);font-weight:600">Tomar foto o elegir de galería</div>
+            <div style="font-size:11px;color:var(--text-faint);margin-top:4px">Muestra los residuos listos y bien separados</div>
+          </div>
+          <img id="foto-ciudadano-preview" style="display:none;width:100%;border-radius:8px;max-height:200px;object-fit:cover">
+        </div>
+        <input type="file" id="foto-ciudadano" accept="image/*" capture="environment" style="display:none" onchange="previewFoto('foto-ciudadano')">
+
+        <!-- BOTÓN SOLICITAR -->
+        <button class="btn-primary" style="margin-top:16px" onclick="schedulePickup()">
+          📍 Confirmar Solicitud de Recolección
+        </button>
+
+        <!-- CONFIRMACIÓN -->
+        <div id="solicitud-ok" style="display:none;margin-top:12px;background:var(--green-pale);border:1px solid rgba(82,183,136,0.35);border-radius:var(--radius-sm);padding:14px;">
+          <div style="font-size:14px;font-weight:700;color:var(--green-deep);margin-bottom:4px;">✅ ¡Solicitud enviada!</div>
+          <div style="font-size:13px;color:var(--text-muted);line-height:1.6;">Un reciclador certificado de tu zona recibirá tu solicitud. Cuando pese tu material recibirás tus cUSD automáticamente.</div>
+        </div>
       </div>
 
       <div class="card">
@@ -928,10 +964,22 @@ function selectResiduo(id) {
 
 function schedulePickup() {
   if (!connectedAddress) {
-    alert('Primero conecta tu billetera para programar una entrega.');
+    alert('Primero conecta tu billetera para solicitar una recolección.');
     return;
   }
-  alert('¡Genial! Tu entrega ha sido agendada para la próxima EcoRuta de tu zona.');
+  const direccion = document.getElementById('inp-direccion').value.trim();
+  const residuoSeleccionado = document.querySelector('.residuo-node.selected');
+  if (!residuoSeleccionado) {
+    alert('Selecciona el tipo de residuo que vas a entregar.');
+    return;
+  }
+  if (!direccion) {
+    alert('Escribe tu dirección para que el reciclador pueda llegar.');
+    return;
+  }
+  // Mostrar confirmación
+  document.getElementById('solicitud-ok').style.display = 'block';
+  document.getElementById('solicitud-ok').scrollIntoView({ behavior: 'smooth' });
 }
 
 /* ── Inicializar: si no hay billetera, mostrar gate en Hogar ── */

@@ -257,6 +257,23 @@
   .contract-box-label { font-weight: 700; color: var(--gold); font-size: 11px; letter-spacing: .06em; text-transform: uppercase; margin-bottom: 4px; }
   .contract-box-addr { font-family: 'DM Mono', monospace; color: var(--text-muted); word-break: break-all; font-size: 11px; }
 
+  /* ── PHOTO UPLOAD ── */
+  .photo-upload-box {
+    border: 1.5px dashed var(--border-strong);
+    border-radius: var(--radius-sm);
+    padding: 20px;
+    text-align: center;
+    cursor: pointer;
+    background: var(--bg);
+    transition: all .2s;
+    min-height: 90px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .photo-upload-box:hover { border-color: var(--green-mid); background: var(--green-pale); }
+  .photo-upload-box.has-photo { padding: 6px; border-style: solid; border-color: var(--green-bright); }
+
   .review-stars { color: var(--gold); font-size: 14px; margin-top: 4px; }
   #view-reciclador, #view-rutas, #view-empresas, #view-info { display: none; }
 
@@ -375,7 +392,20 @@
             <div class="residuo-label">Cartón / Papel</div>
           </div>
         </div>
-        <button class="btn-primary" onclick="schedulePickup()">Programar Entrega en mi Casa</button>
+        <!-- FOTO DEL CIUDADANO -->
+        <div class="field" style="margin-top:14px">
+          <label>📸 Foto de tus residuos separados</label>
+          <div class="photo-upload-box" id="foto-ciudadano-box" onclick="document.getElementById('foto-ciudadano').click()">
+            <div class="photo-upload-placeholder" id="foto-ciudadano-placeholder">
+              <div style="font-size:28px;margin-bottom:6px">📷</div>
+              <div style="font-size:13px;color:var(--text-muted)">Toca para tomar foto o elegir de galería</div>
+              <div style="font-size:11px;color:var(--text-faint);margin-top:4px">Muestra los residuos listos para recoger</div>
+            </div>
+            <img id="foto-ciudadano-preview" style="display:none;width:100%;border-radius:8px;max-height:180px;object-fit:cover">
+          </div>
+          <input type="file" id="foto-ciudadano" accept="image/*" capture="environment" style="display:none" onchange="previewFoto('foto-ciudadano')">
+        </div>
+        <button class="btn-primary" onclick="schedulePickup()">📍 Solicitar Recolección en mi Casa</button>
       </div>
 
       <div class="card">
@@ -440,6 +470,31 @@
       <div class="field">
         <label>Kilogramos en Báscula</label>
         <input type="number" id="inp-kilos" placeholder="Ej. 14.2" step="0.1" min="0">
+      </div>
+
+      <!-- FOTOS DEL RECICLADOR -->
+      <div class="field">
+        <label>📸 Foto del peso en báscula</label>
+        <div class="photo-upload-box" onclick="document.getElementById('foto-bascula').click()">
+          <div class="photo-upload-placeholder" id="foto-bascula-placeholder">
+            <div style="font-size:28px;margin-bottom:6px">⚖️</div>
+            <div style="font-size:13px;color:var(--text-muted)">Foto de la báscula con el peso visible</div>
+          </div>
+          <img id="foto-bascula-preview" style="display:none;width:100%;border-radius:8px;max-height:160px;object-fit:cover">
+        </div>
+        <input type="file" id="foto-bascula" accept="image/*" capture="environment" style="display:none" onchange="previewFoto('foto-bascula')">
+      </div>
+
+      <div class="field">
+        <label>📸 Foto junto al ciudadano</label>
+        <div class="photo-upload-box" onclick="document.getElementById('foto-ciudadano-rec').click()">
+          <div class="photo-upload-placeholder" id="foto-ciudadano-rec-placeholder">
+            <div style="font-size:28px;margin-bottom:6px">🤝</div>
+            <div style="font-size:13px;color:var(--text-muted)">Confirmación visual de la entrega</div>
+          </div>
+          <img id="foto-ciudadano-rec-preview" style="display:none;width:100%;border-radius:8px;max-height:160px;object-fit:cover">
+        </div>
+        <input type="file" id="foto-ciudadano-rec" accept="image/*" capture="environment" style="display:none" onchange="previewFoto('foto-ciudadano-rec')">
       </div>
 
       <!--
@@ -835,6 +890,28 @@ function updateCiudadanoGate(connected) {
 }
 
 /* ────── Tabs & Residuos ────── */
+
+/* ════════════════════════════════════════════════════════════════
+   previewFoto()
+   Muestra la imagen seleccionada en el recuadro de upload.
+   En producción aquí subirías la foto a IPFS o Cloudinary
+   y guardarías el hash/URL vinculado a la transacción on-chain.
+   ════════════════════════════════════════════════════════════════ */
+function previewFoto(inputId) {
+  const input       = document.getElementById(inputId);
+  const preview     = document.getElementById(inputId + '-preview');
+  const placeholder = document.getElementById(inputId + '-placeholder');
+  if (!input.files || !input.files[0]) return;
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    preview.src = e.target.result;
+    preview.style.display = 'block';
+    if (placeholder) placeholder.style.display = 'none';
+    const uploadBox = preview.parentElement;
+    if (uploadBox) uploadBox.classList.add('has-photo');
+  };
+  reader.readAsDataURL(input.files[0]);
+}
 
 function switchTab(role, buttonElement) {
   document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));

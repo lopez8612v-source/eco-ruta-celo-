@@ -166,13 +166,13 @@
   <div id="view-ciudadano">
     <div class="balance-card">
       <div class="balance-label">Mis Eco-Incentivos acumulados</div>
-      <div class="balance-amount" id="display-balance">0.00<span class="balance-currency">cUSD</span></div>
+      <div class="balance-amount" id="display-balance">0.00<span class="balance-currency">USDC</span></div>
       <div class="net-pill"><span class="net-dot"></span> Celo Sepolia Testnet</div>
     </div>
 
     <div class="card">
       <div class="card-title">📍 Solicitar Recolección a Domicilio</div>
-      <p class="form-desc">Sigue los 3 pasos para que un reciclador certificado pase por tu casa y ganes tus cUSD.</p>
+      <p class="form-desc">Sigue los 3 pasos para que un reciclador certificado pase por tu casa y ganes tus USDC.</p>
 
       <div class="step-label">Paso 1 — ¿Qué vas a entregar?</div>
       <div class="residuos-selector" style="margin-bottom:16px">
@@ -209,7 +209,7 @@
 
       <div id="solicitud-ok" style="display:none;margin-top:12px;background:var(--green-pale);border:1px solid rgba(82,183,136,0.35);border-radius:var(--radius-sm);padding:14px;">
         <div style="font-size:14px;font-weight:700;color:var(--green-deep);margin-bottom:4px;">✅ ¡Solicitud enviada!</div>
-        <div style="font-size:13px;color:var(--text-muted);line-height:1.6;">Un reciclador certificado de tu zona recibirá tu solicitud. Cuando pese tu material recibirás tus cUSD automáticamente.</div>
+        <div style="font-size:13px;color:var(--text-muted);line-height:1.6;">Un reciclador certificado de tu zona recibirá tu solicitud. Cuando pese tu material recibirás tus USDC automáticamente.</div>
       </div>
     </div>
 
@@ -229,7 +229,7 @@
 
       <div class="contract-box">
         <div class="contract-box-label">📋 Smart Contract EcoRuta</div>
-        <div class="contract-box-addr" id="display-contract-addr">0x020fb2b7b03CCE42e0Fd10dAA4FFcd0b806b4463</div>
+        <div class="contract-box-addr" id="display-contract-addr">0x9F71917d9734679C674B02e28e5cBdc36D240F6F</div>
       </div>
 
       <!-- REGLAS VISIBLES -->
@@ -277,7 +277,7 @@
 
       <button class="btn-primary" id="btn-registrar" onclick="registrarReciclaje()">
         <span class="spinner" id="spin-registrar"></span>
-        <span id="label-registrar">✅ Validar Peso y Emitir cUSD</span>
+        <span id="label-registrar">✅ Validar Peso y Emitir USDC</span>
       </button>
 
       <div class="tx-feedback" id="tx-feedback">
@@ -322,7 +322,7 @@
       <p class="form-desc">Las empresas depositan fondos al contrato inteligente para cumplir la Ley 1672. Todo transparente en Celo Sepolia.</p>
       <div class="contract-box">
         <div class="contract-box-label">📋 Contrato para depósitos</div>
-        <div class="contract-box-addr">0x020fb2b7b03CCE42e0Fd10dAA4FFcd0b806b4463</div>
+        <div class="contract-box-addr">0x9F71917d9734679C674B02e28e5cBdc36D240F6F</div>
       </div>
       <div class="info-block">
         <div class="info-block-icon">📊</div>
@@ -332,7 +332,7 @@
         </div>
       </div>
       <div class="field">
-        <label>Monto a depositar (cUSD)</label>
+        <label>Monto a depositar (USDC)</label>
         <input type="number" id="inp-deposito" placeholder="Ej. 1000" min="1">
       </div>
       <button class="btn-primary" onclick="depositarFondos()">
@@ -357,14 +357,14 @@
         <div class="info-block-icon">❓</div>
         <div class="info-block-text">
           <h4>¿Quién paga los incentivos?</h4>
-          <p>Las corporaciones obligadas por la Ley 1672 depositan cUSD al contrato. Ese dinero va directo a tu billetera cuando reciclas.</p>
+          <p>Las corporaciones obligadas por la Ley 1672 depositan USDC al contrato. Ese dinero va directo a tu billetera cuando reciclas.</p>
         </div>
       </div>
       <div class="info-block">
         <div class="info-block-icon">💵</div>
         <div class="info-block-text">
-          <h4>¿Qué es el cUSD?</h4>
-          <p>El Dólar Digital de Celo. Cada cUSD = 1 dólar real. Lo recibes en tu billetera y lo cambias a pesos colombianos por Bancolombia o Nequi.</p>
+          <h4>¿Qué es el USDC?</h4>
+          <p>El Dólar Digital de Celo. Cada USDC = 1 dólar real. Lo recibes en tu billetera y lo cambias a pesos colombianos por Bancolombia o Nequi.</p>
         </div>
       </div>
       <div class="info-block">
@@ -381,7 +381,7 @@
           <p>Dignificamos el trabajo de los recicladores tradicionales de Cali dándoles comisiones por actuar como verificadores on-chain.</p>
         </div>
       </div>
-      <a href="https://celo-sepolia.blockscout.com/address/0x020fb2b7b03CCE42e0Fd10dAA4FFcd0b806b4463" target="_blank" class="btn-outline">🔍 Ver contrato en Blockscout</a>
+      <a href="https://celo-sepolia.blockscout.com/address/0x9F71917d9734679C674B02e28e5cBdc36D240F6F" target="_blank" class="btn-outline">🔍 Ver contrato en Blockscout</a>
     </div>
   </div>
 
@@ -395,8 +395,8 @@ const CELO_CHAIN_ID    = '0xaa36a7'; // Celo Sepolia (11155111) — ajusta si di
 const CELO_CHAIN_ID_DEC = 11142220;
 const CELO_RPC         = 'https://celo-sepolia.drpc.org';
 const CELO_EXPLORER    = 'https://celo-sepolia.blockscout.com';
-const CONTRACT_ADDRESS = '0x020fb2b7b03CCE42e0Fd10dAA4FFcd0b806b4463';
-const CUSD_ADDRESS     = '0x874069Fa1Eb16D44d622F2e0Ca25eeA172369bC1';
+const CONTRACT_ADDRESS = '0x9F71917d9734679C674B02e28e5cBdc36D240F6F';
+const CUSD_ADDRESS     = '0x01C5C0122039549AD1493B8220cABEdD739BC44E';
 
 const CONTRACT_ABI = [
   "function registrarReciclaje(address ciudadano, uint256 kilos100, string fotoHashCiudadano, string fotoHashReciclador) external",
@@ -521,7 +521,7 @@ async function registrarReciclaje() {
 
     const receipt = await tx.wait(1);
     showTxFeedback('success', '✅',
-      `¡Registro confirmado! ${kilosStr} kg de PET procesados. cUSD enviados al ciudadano y al reciclador.`,
+      `¡Registro confirmado! ${kilosStr} kg de PET procesados. USDC enviados al ciudadano y al reciclador.`,
       `Tx: <a href="${CELO_EXPLORER}/tx/${receipt.transactionHash}" target="_blank">${receipt.transactionHash.slice(0,20)}…</a>`);
 
     document.getElementById('inp-recipient').value = '';
@@ -552,7 +552,7 @@ async function depositarFondos() {
   const monto = ethers.utils.parseEther(montoStr);
   document.getElementById('btn-deposito') && (document.getElementById('btn-deposito').disabled = true);
   document.getElementById('spin-deposito').style.display = 'block';
-  document.getElementById('label-deposito').textContent  = 'Aprobando cUSD…';
+  document.getElementById('label-deposito').textContent  = 'Aprobando USDC…';
 
   try {
     // Paso 1: approve
@@ -566,7 +566,7 @@ async function depositarFondos() {
     showEmpresaFeedback('success', '⏳', 'Depósito enviado. Esperando confirmación…', `Hash: ${tx.hash}`);
     const receipt = await tx.wait(1);
     showEmpresaFeedback('success', '✅',
-      `¡${montoStr} cUSD depositados al contrato! El fondo de EcoRuta está listo para recompensar reciclajes.`,
+      `¡${montoStr} USDC depositados al contrato! El fondo de EcoRuta está listo para recompensar reciclajes.`,
       `Tx: <a href="${CELO_EXPLORER}/tx/${receipt.transactionHash}" target="_blank">${receipt.transactionHash.slice(0,20)}…</a>`);
 
     document.getElementById('inp-deposito').value = '';
@@ -589,7 +589,7 @@ async function fetchBalanceContrato() {
     const raw       = await contract.balanceContrato();
     const formatted = parseFloat(ethers.utils.formatEther(raw)).toFixed(2);
     document.getElementById('balance-contrato-display').innerHTML =
-      `Capital disponible en el contrato: <strong>${formatted} cUSD</strong>`;
+      `Capital disponible en el contrato: <strong>${formatted} USDC</strong>`;
   } catch(e) {
     document.getElementById('balance-contrato-display').textContent = 'Conecta tu billetera para ver el balance.';
   }
@@ -666,7 +666,7 @@ function setRegistrarLoading(loading) {
   document.getElementById('btn-registrar').disabled = loading;
   document.getElementById('spin-registrar').style.display = loading ? 'block' : 'none';
   document.getElementById('label-registrar').textContent  =
-    loading ? 'Procesando en Celo Sepolia…' : '✅ Validar Peso y Emitir cUSD';
+    loading ? 'Procesando en Celo Sepolia…' : '✅ Validar Peso y Emitir USDC';
 }
 
 function previewFoto(inputId) {
